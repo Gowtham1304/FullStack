@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Address Details</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            background-image: url(ipaddress.jpg);
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        h1 {
+            text-align: center;
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            margin: 0;
+        }
+
+        #dashboard {
+            background-color: #333;
+            padding: 10px 20px;
+            display: flex;
+        }
+
+        #dashboard a {
+            color: #fff;
+            text-decoration: none;
+            margin-right: 20px;
+            font-weight: bold;
+        }
+
+        #dashboard a:hover {
+            text-decoration: underline;
+        }
+
+        #ipForm {
+            max-width: 400px;
+            margin: 20px auto;
+            text-align: center;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button[type="submit"] {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #555;
+        }
+
+        #ipDetails {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: none; /* Initially hide the IP details box */
+        }
+
+        p {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        #ipDetails p:nth-child(odd) {
+            background-color: #f4f4f4;
+        }
+
+        #ipDetails p {
+            text-align: center;
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .flag-icon-large {
+            height: 300px;
+            width: 350px;
+        }
+    </style>
+</head>
+<body>
+    <h1>IP Address Details</h1>
+
+    <div id="dashboard">
+        <a href="#">Home</a>
+        <a href="https://en.wikipedia.org/wiki/IP_address#:~:text=An%20Internet%20Protocol%20address%20(IP,interface%20identification%2C%20and%20location%20addressing.">About</a>
+        <a href="https://www.linkedin.com/in/gowtham-krishna-8a2605246/"> contact here</a>
+    </div>
+
+    <form id="ipForm">
+        <label for="ipInput">Enter IP Address:</label>
+        <input type="text" id="ipInput" name="ipInput" required>
+        <button type="submit">Get Details</button>
+    </form>
+    
+    <div id="ipDetails"></div>
+
+    <script>
+        document.getElementById('ipForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const ipInput = document.getElementById('ipInput').value;
+            fetch(`http://api.ipstack.com/${ipInput}?access_key=da8c013bde8fc93834525f1642e85fb1`)
+                .then(response => response.json())
+                .then(data => {
+                    const ipDetails = document.getElementById('ipDetails');
+                    ipDetails.innerHTML = `
+                        <p>IP address: ${data.ip}</p>
+                        <p>Continent code: ${data.continent_code}</p>
+                        <p>Continent name: ${data.continent_name}</p>
+                        <p>Country code: ${data.country_code}</p>
+                        <p>Country name: ${data.country_name}</p>
+                        <p>Region code: ${data.region_code}</p>
+                        <p>Region name: ${data.region_name}</p>
+                        <p>City: ${data.city}</p>
+                        <p>Location: Latitude ${data.latitude}, Longitude ${data.longitude}</p>
+                        <p><strong>Country flag:</strong></p>
+                        <p><span class="flag-icon flag-icon-${data.country_code.toLowerCase()} flag-icon-large"></span></p>
+                    `;
+                    ipDetails.style.display = 'block'; // Display the IP details box
+                })
+                .catch(error => {
+                    const ipDetails = document.getElementById('ipDetails');
+                    ipDetails.innerHTML = '<p>Invalid IP address or API error.</p>';
+                    ipDetails.style.display = 'block'; // Display the IP details box
+                    console.error('Error:', error);
+                });
+        });
+    </script>
+</body>
+</html>
